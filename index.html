@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShamLabs — AI Chatbots & WordPress Agency</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.16.4/framer-motion.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        secondary: '#06B6D4',
+                        accent: '#8B5CF6',
+                        dark: {
+                            bg: '#0B1120',
+                            card: '#111827',
+                            text: '#F9FAFB',
+                            muted: '#94A3B8',
+                            border: '#1E293B'
+                        },
+                        light: {
+                            bg: '#FFFFFF',
+                            section: '#F1F5F9',
+                            text: '#0F172A'
+                        }
+                    },
+                    fontFamily: {
+                        title: ['Space Grotesk', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    animation: {
+                        'glow': 'glow 3s ease-in-out infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%, 100%': { opacity: 0.5, transform: 'scale(1)' },
+                            '50%': { opacity: 0.8, transform: 'scale(1.05)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply font-body bg-dark-bg text-dark-text overflow-x-hidden;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                @apply font-title;
+            }
+            .mono {
+                @apply font-mono;
+            }
+        }
+
+        @layer components {
+            .glass-card {
+                @apply bg-dark-card border border-dark-border rounded-2xl backdrop-blur-sm transition-all duration-300;
+            }
+            .glass-card:hover {
+                @apply border-primary/50 shadow-[0_0_30px_rgba(37,99,235,0.15)];
+            }
+            .btn-primary {
+                @apply bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-bold transition-all transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/25 flex items-center gap-2;
+            }
+            .btn-secondary {
+                @apply border border-dark-border hover:border-primary/50 text-dark-text px-8 py-4 rounded-xl font-bold transition-all transform hover:-translate-y-1;
+            }
+            .text-gradient {
+                @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
+            }
+            .section-padding {
+                @apply py-24 px-6 md:px-12 lg:px-24;
+            }
+        }
+
+        /* Custom Shine Effect */
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+        .shine-effect:hover::after {
+            left: 100%;
+            top: 100%;
+        }
+
+        /* Background Glows */
+        .bg-glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            @apply bg-dark-bg;
+        }
+        ::-webkit-scrollbar-thumb {
+            @apply bg-dark-border rounded-full hover:bg-primary/50;
+        }
+    </style>
+</head>
+<body class="dark">
+
+    <!-- Background Decorations -->
+    <div class="bg-glow bg-primary top-[-100px] left-[-100px]"></div>
+    <div class="bg-glow bg-accent bottom-[10%] right-[-100px]"></div>
+    <div class="bg-glow bg-secondary top-[40%] left-[20%]"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-dark-bg/80 backdrop-blur-md border-b border-dark-border px-6 md:px-12 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent p-[2px] transition-transform group-hover:rotate-12">
+                    <div class="w-full h-full rounded-full bg-dark-bg flex items-center justify-center overflow-hidden">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=ShamLabs" alt="Logo" class="w-8 h-8">
+                    </div>
+                </div>
+                <span class="text-xl font-bold tracking-tight">Sham<span class="text-primary">Labs</span></span>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#services" class="text-sm font-medium text-dark-muted hover:text-primary transition-colors">Services</a>
+                <a href="#process" class="text-sm font-medium text-dark-muted hover:text-primary transition-colors">Process</a>
+                <a href="#results" class="text-sm font-medium text-dark-muted hover:text-primary transition-colors">Results</a>
+                <a href="#faq" class="text-sm font-medium text-dark-muted hover:text-primary transition-colors">FAQ</a>
+                <a href="#contact" class="btn-primary py-2 px-6 text-sm">Get Started</a>
+            </div>
+
+            <button class="md:hidden text-dark-text">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="section-padding min-h-screen flex items-center relative overflow-hidden pt-32">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+            <div id="hero-content">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-6 mono">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    </span>
+                    Next-Gen Digital Solutions
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6">
+                    Scale Faster with <span class="text-gradient">AI</span> & WordPress.
+                </h1>
+                <p class="text-lg text-dark-muted mb-10 max-w-lg leading-relaxed">
+                    We build intelligent automation and high-converting websites that help modern businesses scale effortlessly.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#contact" class="btn-primary shine-effect">
+                        Start Project <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#portfolio" class="btn-secondary">View Portfolio</a>
+                </div>
+                
+                <div class="mt-12 flex items-center gap-6">
+                    <div class="flex -space-x-3">
+                        <img src="https://i.pravatar.cc/100?u=1" class="w-10 h-10 rounded-full border-2 border-dark-bg" alt="User">
+                        <img src="https://i.pravatar.cc/100?u=2" class="w-10 h-10 rounded-full border-2 border-dark-bg" alt="User">
+                        <img src="https://i.pravatar.cc/100?u=3" class="w-10 h-10 rounded-full border-2 border-dark-bg" alt="User">
+                        <div class="w-10 h-10 rounded-full border-2 border-dark-bg bg-primary flex items-center justify-center text-[10px] font-bold">500+</div>
+                    </div>
+                    <p class="text-sm text-dark-muted"><strong class="text-dark-text">500+ Businesses</strong> Trust Us Worldwide</p>
+                </div>
+            </div>
+
+            <div class="relative lg:block" id="hero-visual">
+                <div class="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 blur-3xl rounded-full opacity-50 animate-glow"></div>
+                <div class="glass-card p-6 relative z-10 animate-float">
+                    <div class="flex items-center justify-between mb-8 pb-4 border-b border-dark-border">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                                <i data-lucide="bot" class="text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold">AI Assistant</h4>
+                                <p class="text-[10px] text-green-500 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Online
+                                </p>
+                            </div>
+                        </div>
+                        <i data-lucide="more-horizontal" class="text-dark-muted w-5 h-5"></i>
+                    </div>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-dark-border flex-shrink-0"></div>
+                            <div class="bg-dark-border/50 p-3 rounded-2xl rounded-tl-none text-sm max-w-[80%]">
+                                Hello! How can I help you scale your business today?
+                            </div>
+                        </div>
+                        <div class="flex gap-3 justify-end">
+                            <div class="bg-primary p-3 rounded-2xl rounded-tr-none text-sm max-w-[80%]">
+                                I need a custom AI chatbot for my WordPress site.
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-dark-border flex-shrink-0"></div>
+                            <div class="bg-dark-border/50 p-3 rounded-2xl rounded-tl-none text-sm">
+                                <div class="flex gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-dark-muted animate-bounce"></span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-dark-muted animate-bounce [animation-delay:0.2s]"></span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-dark-muted animate-bounce [animation-delay:0.4s]"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-dark-bg border border-dark-border">
+                        <div class="flex-1 text-xs text-dark-muted">Type your message...</div>
+                        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                            <i data-lucide="send" class="w-4 h-4 text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ticker -->
+    <div class="py-10 bg-dark-card border-y border-dark-border overflow-hidden">
+        <div class="flex whitespace-nowrap animate-marquee">
+            <div class="flex items-center gap-12 px-6 mono text-xs font-medium text-dark-muted uppercase tracking-widest">
+                <span>AI Automation</span> <span class="text-primary">•</span>
+                <span>WordPress Development</span> <span class="text-primary">•</span>
+                <span>UI/UX Design</span> <span class="text-primary">•</span>
+                <span>Custom Chatbots</span> <span class="text-primary">•</span>
+                <span>API Integrations</span> <span class="text-primary">•</span>
+                <!-- Duplicate for seamless loop -->
+                <span>AI Automation</span> <span class="text-primary">•</span>
+                <span>WordPress Development</span> <span class="text-primary">•</span>
+                <span>UI/UX Design</span> <span class="text-primary">•</span>
+                <span>Custom Chatbots</span> <span class="text-primary">•</span>
+                <span>API Integrations</span> <span class="text-primary">•</span>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 30s linear infinite;
+        }
+    </style>
+
+    <!-- Services Section -->
+    <section id="services" class="section-padding">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <div class="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest mb-4 mono">Our Expertise</div>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Premium Digital Services</h2>
+                <p class="text-dark-muted max-w-2xl mx-auto">We combine cutting-edge AI technology with world-class web development to deliver exceptional results.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Service 1 -->
+                <div class="glass-card p-8 group">
+                    <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary transition-colors">
+                        <i data-lucide="message-square" class="text-primary group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Custom AI Chatbots</h3>
+                    <p class="text-dark-muted text-sm leading-relaxed mb-6">24/7 customer support automation that learns from your data and converts visitors into leads.</p>
+                    <div class="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="glass-card p-8 group">
+                    <div class="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mb-6 group-hover:bg-secondary transition-colors">
+                        <i data-lucide="layout" class="text-secondary group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">WordPress Development</h3>
+                    <p class="text-dark-muted text-sm leading-relaxed mb-6">High-performance, SEO-optimized sites built with the latest technologies for maximum speed.</p>
+                    <div class="flex items-center gap-2 text-xs font-bold text-secondary mono uppercase tracking-wider">
+                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="glass-card p-8 group">
+                    <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent transition-colors">
+                        <i data-lucide="zap" class="text-accent group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Workflow Automation</h3>
+                    <p class="text-dark-muted text-sm leading-relaxed mb-6">Streamline repetitive tasks with AI-driven workflows that save hundreds of hours every month.</p>
+                    <div class="flex items-center gap-2 text-xs font-bold text-accent mono uppercase tracking-wider">
+                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="glass-card p-8 group">
+                    <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary transition-colors">
+                        <i data-lucide="shopping-cart" class="text-primary group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">E-commerce Solutions</h3>
+                    <p class="text-dark-muted text-sm leading-relaxed mb-6">Scalable online stores that convert browsers into buyers with seamless checkout experiences.</p>
+                    <div class="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
+                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Service 5 -->
+                <div class="glass-card p-8 group">
+                    <div class="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mb-6 group-hover:bg-secondary transition-colors">
+                        <i data-lucide="palette" class="text-secondary group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">UI/UX Design</h3>
+                    <p class="text-dark-muted text-sm leading-relaxed mb-6">Modern, user-centric digital experiences that are as beautiful as they are functional.</p>
+                    <div class="flex items-center gap-2 text-xs font-bold text-secondary mono uppercase tracking-wider">
+                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Service 6 -->
+                <div class="glass-card p-8 group">
+                    <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent transition-colors">
+                        <i data-lucide="shield-check" class="text-accent group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Maintenance & Support</h3>
+                    <p class="text-dark-muted text-sm leading-relaxed mb-6">Keeping your digital assets secure, updated, and performing at their best 24/7.</p>
+                    <div class="flex items-center gap-2 text-xs font-bold text-accent mono uppercase tracking-wider">
+                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section-padding bg-dark-card/30">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+            <div class="relative">
+                <div class="absolute -inset-10 bg-secondary/10 blur-3xl rounded-full"></div>
+                <div class="glass-card p-8 relative z-10 overflow-hidden">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="h-4 bg-dark-border rounded-full w-3/4"></div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="h-24 bg-primary/20 rounded-xl border border-primary/30 flex flex-col items-center justify-center">
+                                <span class="text-2xl font-bold text-primary">98%</span>
+                                <span class="text-[10px] uppercase mono">Growth</span>
+                            </div>
+                            <div class="h-24 bg-secondary/20 rounded-xl border border-secondary/30 flex flex-col items-center justify-center">
+                                <span class="text-2xl font-bold text-secondary">10x</span>
+                                <span class="text-[10px] uppercase mono">Speed</span>
+                            </div>
+                            <div class="h-24 bg-accent/20 rounded-xl border border-accent/30 flex flex-col items-center justify-center">
+                                <span class="text-2xl font-bold text-accent">24/7</span>
+                                <span class="text-[10px] uppercase mono">Active</span>
+                            </div>
+                        </div>
+                        <div class="h-32 bg-dark-bg/50 rounded-xl border border-dark-border p-4">
+                            <div class="flex items-end gap-2 h-full">
+                                <div class="w-full bg-primary/40 h-1/2 rounded-t-sm"></div>
+                                <div class="w-full bg-primary/40 h-3/4 rounded-t-sm"></div>
+                                <div class="w-full bg-primary h-full rounded-t-sm"></div>
+                                <div class="w-full bg-primary/40 h-2/3 rounded-t-sm"></div>
+                                <div class="w-full bg-primary/40 h-1/2 rounded-t-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-4xl font-bold mb-8">Why Choose ShamLabs?</h2>
+                <div class="space-y-8">
+                    <div class="flex gap-6">
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="cpu" class="text-primary w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2">Smart AI Integration</h4>
+                            <p class="text-dark-muted text-sm leading-relaxed">We don't just add AI; we integrate it into your core business processes for maximum impact.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="gauge" class="text-secondary w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2">Lightning Fast Speed</h4>
+                            <p class="text-dark-muted text-sm leading-relaxed">Our WordPress solutions are optimized for Core Web Vitals, ensuring top-tier performance.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="target" class="text-accent w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2">Conversion Focused</h4>
+                            <p class="text-dark-muted text-sm leading-relaxed">Every pixel and every line of code is designed with one goal in mind: growing your revenue.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Metrics Section -->
+    <section class="section-padding bg-primary relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 30px 30px;"></div>
+        </div>
+        <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+            <div class="text-center">
+                <div class="text-5xl font-bold text-white mb-2">98%</div>
+                <div class="text-white/70 text-xs font-bold uppercase tracking-widest mono">Satisfaction</div>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl font-bold text-white mb-2">250+</div>
+                <div class="text-white/70 text-xs font-bold uppercase tracking-widest mono">Projects</div>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl font-bold text-white mb-2">10x</div>
+                <div class="text-white/70 text-xs font-bold uppercase tracking-widest mono">Deployment</div>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl font-bold text-white mb-2">24/7</div>
+                <div class="text-white/70 text-xs font-bold uppercase tracking-widest mono">Support</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="section-padding">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl font-bold mb-6">Our Working Process</h2>
+                <p class="text-dark-muted max-w-2xl mx-auto">A streamlined approach to taking your project from concept to reality.</p>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center relative">
+                    <div class="w-16 h-16 rounded-full bg-dark-card border border-dark-border flex items-center justify-center mx-auto mb-6 text-xl font-bold text-primary relative z-10">01</div>
+                    <h4 class="text-lg font-bold mb-3">Discovery</h4>
+                    <p class="text-dark-muted text-sm">Deep dive into your business goals and user needs.</p>
+                </div>
+                <div class="text-center relative">
+                    <div class="w-16 h-16 rounded-full bg-dark-card border border-dark-border flex items-center justify-center mx-auto mb-6 text-xl font-bold text-secondary relative z-10">02</div>
+                    <h4 class="text-lg font-bold mb-3">Strategy</h4>
+                    <p class="text-dark-muted text-sm">Crafting a custom roadmap for your digital success.</p>
+                </div>
+                <div class="text-center relative">
+                    <div class="w-16 h-16 rounded-full bg-dark-card border border-dark-border flex items-center justify-center mx-auto mb-6 text-xl font-bold text-accent relative z-10">03</div>
+                    <h4 class="text-lg font-bold mb-3">Development</h4>
+                    <p class="text-dark-muted text-sm">Building with precision using modern tech stacks.</p>
+                </div>
+                <div class="text-center relative">
+                    <div class="w-16 h-16 rounded-full bg-dark-card border border-dark-border flex items-center justify-center mx-auto mb-6 text-xl font-bold text-primary relative z-10">04</div>
+                    <h4 class="text-lg font-bold mb-3">Launch</h4>
+                    <p class="text-dark-muted text-sm">Going live and continuous optimization for growth.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section-padding bg-dark-card/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="glass-card p-8">
+                    <div class="flex text-yellow-500 mb-6 gap-1">
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                    </div>
+                    <p class="text-dark-muted italic mb-8 leading-relaxed">"The AI chatbot ShamLabs built for us has completely transformed our customer service. It handles 80% of queries automatically!"</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">JD</div>
+                        <div>
+                            <div class="text-sm font-bold">John Doe</div>
+                            <div class="text-[10px] text-dark-muted">CEO, TechFlow</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-8">
+                    <div class="flex text-yellow-500 mb-6 gap-1">
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                    </div>
+                    <p class="text-dark-muted italic mb-8 leading-relaxed">"Our new WordPress site is blazing fast. We saw a 40% increase in conversions within the first month of launching."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center font-bold text-secondary">SM</div>
+                        <div>
+                            <div class="text-sm font-bold">Sarah Miller</div>
+                            <div class="text-[10px] text-dark-muted">Marketing Director, Bloom</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-8">
+                    <div class="flex text-yellow-500 mb-6 gap-1">
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
+                    </div>
+                    <p class="text-dark-muted italic mb-8 leading-relaxed">"The level of technical expertise and attention to detail at ShamLabs is unmatched. Highly recommended for any AI project."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center font-bold text-accent">MR</div>
+                        <div>
+                            <div class="text-sm font-bold">Michael Ross</div>
+                            <div class="text-[10px] text-dark-muted">Founder, DataSync</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section-padding">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-4xl font-bold mb-12 text-center">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <div class="glass-card p-6 cursor-pointer group" onclick="toggleFaq(this)">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold">How long does it take to build a custom AI chatbot?</h4>
+                        <i data-lucide="plus" class="w-5 h-5 text-primary group-[.open]:rotate-45 transition-transform"></i>
+                    </div>
+                    <div class="max-h-0 overflow-hidden transition-all duration-300 group-[.open]:max-h-40 group-[.open]:mt-4">
+                        <p class="text-dark-muted text-sm">Typically, a custom AI chatbot takes 2-4 weeks depending on the complexity and data integration requirements.</p>
+                    </div>
+                </div>
+                <div class="glass-card p-6 cursor-pointer group" onclick="toggleFaq(this)">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold">Will my website be mobile-friendly?</h4>
+                        <i data-lucide="plus" class="w-5 h-5 text-primary group-[.open]:rotate-45 transition-transform"></i>
+                    </div>
+                    <div class="max-h-0 overflow-hidden transition-all duration-300 group-[.open]:max-h-40 group-[.open]:mt-4">
+                        <p class="text-dark-muted text-sm">Absolutely! Every site we build is 100% responsive and optimized for all devices and screen sizes.</p>
+                    </div>
+                </div>
+                <div class="glass-card p-6 cursor-pointer group" onclick="toggleFaq(this)">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold">Do you offer post-launch support?</h4>
+                        <i data-lucide="plus" class="w-5 h-5 text-primary group-[.open]:rotate-45 transition-transform"></i>
+                    </div>
+                    <div class="max-h-0 overflow-hidden transition-all duration-300 group-[.open]:max-h-40 group-[.open]:mt-4">
+                        <p class="text-dark-muted text-sm">Yes, we provide ongoing maintenance and support packages to ensure your digital assets stay secure and updated.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-padding relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="glass-card p-12 lg:p-20 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent pointer-events-none"></div>
+                <div class="grid lg:grid-cols-2 gap-16 relative z-10">
+                    <div>
+                        <h2 class="text-4xl md:text-5xl font-bold mb-8">Ready to <span class="text-gradient">Transform</span> Your Business?</h2>
+                        <p class="text-dark-muted text-lg mb-12">Join hundreds of successful brands using ShamLabs to automate and grow. Let's build something extraordinary together.</p>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-dark-bg border border-dark-border flex items-center justify-center">
+                                    <i data-lucide="mail" class="text-primary w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-dark-muted uppercase mono">Email Us</div>
+                                    <div class="font-bold">hello@shamlabs.com</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-dark-bg border border-dark-border flex items-center justify-center">
+                                    <i data-lucide="message-circle" class="text-secondary w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-dark-muted uppercase mono">Live Chat</div>
+                                    <div class="font-bold">Available 24/7</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <!-- Formspree Integration -->
+                        <form action="YOUR_FORMSPREE_LINK_HERE" method="POST" class="space-y-4">
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <input type="text" name="name" placeholder="Your Name" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-6 py-4 text-sm focus:border-primary outline-none transition-colors">
+                                <input type="email" name="email" placeholder="Email Address" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-6 py-4 text-sm focus:border-primary outline-none transition-colors">
+                            </div>
+                            <input type="text" name="subject" placeholder="Subject" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-6 py-4 text-sm focus:border-primary outline-none transition-colors">
+                            <textarea name="message" placeholder="How can we help?" rows="5" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-6 py-4 text-sm focus:border-primary outline-none transition-colors"></textarea>
+                            <button type="submit" class="btn-primary w-full justify-center shine-effect">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-dark-border">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <a href="#" class="flex items-center gap-3">
+                <span class="text-xl font-bold tracking-tight">Sham<span class="text-primary">Labs</span></span>
+            </a>
+            <p class="text-dark-muted text-sm">© 2026 ShamLabs. All rights reserved.</p>
+            <div class="flex gap-4">
+                <a href="#" class="w-10 h-10 rounded-lg bg-dark-card border border-dark-border flex items-center justify-center hover:border-primary transition-colors">
+                    <i data-lucide="twitter" class="w-5 h-5 text-dark-muted"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-lg bg-dark-card border border-dark-border flex items-center justify-center hover:border-primary transition-colors">
+                    <i data-lucide="linkedin" class="w-5 h-5 text-dark-muted"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-lg bg-dark-card border border-dark-border flex items-center justify-center hover:border-primary transition-colors">
+                    <i data-lucide="github" class="w-5 h-5 text-dark-muted"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // FAQ Toggle Function
+        function toggleFaq(element) {
+            element.classList.toggle('open');
+        }
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Animations
+        gsap.from("#hero-content > *", {
+            y: 30,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out"
+        });
+
+        gsap.from("#hero-visual", {
+            x: 50,
+            opacity: 0,
+            duration: 1.5,
+            ease: "power3.out"
+        });
+
+        // Section Headers
+        gsap.utils.toArray('section').forEach(section => {
+            const heading = section.querySelector('h2');
+            const p = section.querySelector('p');
+            
+            if (heading) {
+                gsap.from(heading, {
+                    scrollTrigger: {
+                        trigger: heading,
+                        start: "top 80%",
+                    },
+                    y: 30,
+                    opacity: 0,
+                    duration: 1,
+                    ease: "power3.out"
+                });
+            }
+        });
+
+        // Cards Animation
+        gsap.utils.toArray('.glass-card').forEach(card => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 90%",
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power3.out"
+            });
+        });
+    </script>
+</body>
+</html>
