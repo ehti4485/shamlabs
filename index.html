@@ -1,775 +1,199 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ur-Latn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShamLabs — AI Chatbots & WordPress Agency</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
-    <!-- Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.16.4/framer-motion.umd.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#2563EB',
-                        secondary: '#06B6D4',
-                        accent: '#8B5CF6',
-                        dark: {
-                            bg: '#0B1120',
-                            card: '#111827',
-                            text: '#F9FAFB',
-                            muted: '#94A3B8',
-                            border: '#1E293B'
-                        },
-                        light: {
-                            bg: '#FFFFFF',
-                            section: '#F1F5F9',
-                            text: '#0F172A'
-                        }
-                    },
-                    fontFamily: {
-                        title: ['Space Grotesk', 'sans-serif'],
-                        body: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace']
-                    },
-                    animation: {
-                        'glow': 'glow 3s ease-in-out infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        glow: {
-                            '0%, 100%': { opacity: 0.5, transform: 'scale(1)' },
-                            '50%': { opacity: 0.8, transform: 'scale(1.05)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style type="text/tailwindcss">
-        @layer base {
-            body {
-                @apply font-body bg-dark-bg text-dark-text overflow-x-hidden;
-            }
-            h1, h2, h3, h4, h5, h6 {
-                @apply font-title;
-            }
-            .mono {
-                @apply font-mono;
-            }
-        }
-
-        @layer components {
-            .glass-card {
-                @apply bg-dark-card border border-dark-border rounded-2xl backdrop-blur-sm transition-all duration-300;
-            }
-            .glass-card:hover {
-                @apply border-primary/50 shadow-[0_0_30px_rgba(37,99,235,0.15)];
-            }
-            .btn-primary {
-                @apply bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-bold transition-all transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/25 flex items-center gap-2;
-            }
-            .btn-secondary {
-                @apply border border-dark-border hover:border-primary/50 text-dark-text px-8 py-4 rounded-xl font-bold transition-all transform hover:-translate-y-1;
-            }
-            .text-gradient {
-                @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
-            }
-            .section-padding {
-                @apply py-24 px-6 md:px-12 lg:px-24;
-            }
-        }
-
-        /* Custom Shine Effect */
-        .shine-effect {
-            position: relative;
-            overflow: hidden;
-        }
-        .shine-effect::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg);
-            transition: 0.5s;
-        }
-        .shine-effect:hover::after {
-            left: 100%;
-            top: 100%;
-        }
-
-        /* Background Glows */
-        .bg-glow {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            filter: blur(120px);
-            z-index: -1;
-            opacity: 0.15;
-            pointer-events: none;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            @apply bg-dark-bg;
-        }
-        ::-webkit-scrollbar-thumb {
-            @apply bg-dark-border rounded-full hover:bg-primary/50;
-        }
-    </style>
-</head>
-<body class="dark">
-
-    <!-- Background Decorations -->
-    <div class="bg-glow bg-primary top-[-100px] left-[-100px]"></div>
-    <div class="bg-glow bg-accent bottom-[10%] right-[-100px]"></div>
-    <div class="bg-glow bg-secondary top-[40%] left-[20%]"></div>
-
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-dark-bg/80 backdrop-blur-md border-b border-dark-border px-6 md:px-12 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <a href="#" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent p-[2px] transition-transform group-hover:rotate-12">
-                    <div class="w-full h-full rounded-full bg-dark-bg flex items-center justify-center overflow-hidden">
-                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=ShamLabs" alt="Logo" class="w-8 h-8">
-                    </div>
-                </div>
-                <span class="text-xl font-bold tracking-tight">Sham<span class="text-primary">Labs</span></span>
-            </a>
-            
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#services" class="text-sm font-medium text-dark-muted hover:text-primary transition-colors">Services</a>
-                <a href="#process" class="text-sm font-medium text-dark-muted hover:text-primary transition-colors">Process</a>
-                <a href="#results" class="text-sm font-medium text-dark-muted hover:text-primary transition-colors">Results</a>
-                <a href="#faq" class="text-sm font-medium text-dark-muted hover:text-primary transition-colors">FAQ</a>
-                <a href="#contact" class="btn-primary py-2 px-6 text-sm">Get Started</a>
-            </div>
-
-            <button class="md:hidden text-dark-text">
-                <i data-lucide="menu"></i>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="section-padding min-h-screen flex items-center relative overflow-hidden pt-32">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-            <div id="hero-content">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-6 mono">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                    </span>
-                    Next-Gen Digital Solutions
-                </div>
-                <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6">
-                    Scale Faster with <span class="text-gradient">AI</span> & WordPress.
-                </h1>
-                <p class="text-lg text-dark-muted mb-10 max-w-lg leading-relaxed">
-                    We build intelligent automation and high-converting websites that help modern businesses scale effortlessly.
-                </p>
-                <div class="flex flex-wrap gap-4">
-                    <a href="#contact" class="btn-primary shine-effect">
-                        Start Project <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                    </a>
-                    <a href="#portfolio" class="btn-secondary">View Portfolio</a>
-                </div>
-                
-                <div class="mt-12 flex items-center gap-6">
-                    <div class="flex -space-x-3">
-                        <img src="https://i.pravatar.cc/100?u=1" class="w-10 h-10 rounded-full border-2 border-dark-bg" alt="User">
-                        <img src="https://i.pravatar.cc/100?u=2" class="w-10 h-10 rounded-full border-2 border-dark-bg" alt="User">
-                        <img src="https://i.pravatar.cc/100?u=3" class="w-10 h-10 rounded-full border-2 border-dark-bg" alt="User">
-                        <div class="w-10 h-10 rounded-full border-2 border-dark-bg bg-primary flex items-center justify-center text-[10px] font-bold">500+</div>
-                    </div>
-                    <p class="text-sm text-dark-muted"><strong class="text-dark-text">500+ Businesses</strong> Trust Us Worldwide</p>
-                </div>
-            </div>
-
-            <div class="relative lg:block" id="hero-visual">
-                <div class="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 blur-3xl rounded-full opacity-50 animate-glow"></div>
-                <div class="glass-card p-6 relative z-10 animate-float">
-                    <div class="flex items-center justify-between mb-8 pb-4 border-b border-dark-border">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                                <i data-lucide="bot" class="text-primary"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold">AI Assistant</h4>
-                                <p class="text-[10px] text-green-500 flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Online
-                                </p>
-                            </div>
-                        </div>
-                        <i data-lucide="more-horizontal" class="text-dark-muted w-5 h-5"></i>
-                    </div>
-                    
-                    <div class="space-y-4 mb-8">
-                        <div class="flex gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-dark-border flex-shrink-0"></div>
-                            <div class="bg-dark-border/50 p-3 rounded-2xl rounded-tl-none text-sm max-w-[80%]">
-                                Hello! How can I help you scale your business today?
-                            </div>
-                        </div>
-                        <div class="flex gap-3 justify-end">
-                            <div class="bg-primary p-3 rounded-2xl rounded-tr-none text-sm max-w-[80%]">
-                                I need a custom AI chatbot for my WordPress site.
-                            </div>
-                        </div>
-                        <div class="flex gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-dark-border flex-shrink-0"></div>
-                            <div class="bg-dark-border/50 p-3 rounded-2xl rounded-tl-none text-sm">
-                                <div class="flex gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-dark-muted animate-bounce"></span>
-                                    <span class="w-1.5 h-1.5 rounded-full bg-dark-muted animate-bounce [animation-delay:0.2s]"></span>
-                                    <span class="w-1.5 h-1.5 rounded-full bg-dark-muted animate-bounce [animation-delay:0.4s]"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-dark-bg border border-dark-border">
-                        <div class="flex-1 text-xs text-dark-muted">Type your message...</div>
-                        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                            <i data-lucide="send" class="w-4 h-4 text-white"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Ticker -->
-    <div class="py-10 bg-dark-card border-y border-dark-border overflow-hidden">
-        <div class="flex whitespace-nowrap animate-marquee">
-            <div class="flex items-center gap-12 px-6 mono text-xs font-medium text-dark-muted uppercase tracking-widest">
-                <span>AI Automation</span> <span class="text-primary">•</span>
-                <span>WordPress Development</span> <span class="text-primary">•</span>
-                <span>UI/UX Design</span> <span class="text-primary">•</span>
-                <span>Custom Chatbots</span> <span class="text-primary">•</span>
-                <span>API Integrations</span> <span class="text-primary">•</span>
-                <!-- Duplicate for seamless loop -->
-                <span>AI Automation</span> <span class="text-primary">•</span>
-                <span>WordPress Development</span> <span class="text-primary">•</span>
-                <span>UI/UX Design</span> <span class="text-primary">•</span>
-                <span>Custom Chatbots</span> <span class="text-primary">•</span>
-                <span>API Integrations</span> <span class="text-primary">•</span>
-            </div>
-        </div>
-    </div>
-        <script>
- window.difyChatbotConfig = {
-  token: 'Gxs4XZk4yfrk6tig',
-  inputs: {
-    // You can define the inputs from the Start node here
-    // key is the variable name
-    // e.g.
-    // name: "NAME"
-  },
-  systemVariables: {
-    // user_id: 'YOU CAN DEFINE USER ID HERE',
-    // conversation_id: 'YOU CAN DEFINE CONVERSATION ID HERE, IT MUST BE A VALID UUID',
-  },
-  userVariables: {
-    // avatar_url: 'YOU CAN DEFINE USER AVATAR URL HERE',
-    // name: 'YOU CAN DEFINE USER NAME HERE',
-  },
- }
-</script>
-<script
- src="https://udify.app/embed.min.js"
- id="Gxs4XZk4yfrk6tig"
- defer>
-</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Karachi B2B Primary Sourcing &amp; Ground Inspection Service</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@600&amp;display=swap">
 <style>
-  #dify-chatbot-bubble-button {
-    background-color: #1C64F2 !important;
-  }
-  #dify-chatbot-bubble-window {
-    width: 24rem !important;
-    height: 40rem !important;
-  }
+:root{--bg:#0a0e1a;--bg2:#10162a;--card:#121a30;--line:#222c48;--text:#f1f4fb;--muted:#9aa5c0;--blue:#2f6bff;--cyan:#38bdf8;--violet:#8b5cf6;--wa:#25d366;--btn-t:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4f6fc;--bg2:#e9eefb;--card:#fff;--line:#d8dfef;--text:#10162a;--muted:#55617f}}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6;overflow-x:hidden}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;margin:0;letter-spacing:-.02em}
+.wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+.grad{background:linear-gradient(90deg,var(--cyan),var(--blue),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font:700 21px "Space Grotesk",sans-serif;display:flex;gap:10px;align-items:center;color:var(--text);text-decoration:none}
+.logo i{width:34px;height:34px;border-radius:50%;border:2px solid var(--violet);display:grid;place-items:center;font-style:normal;font-size:17px;background:var(--bg2)}
+.links{display:flex;gap:28px;align-items:center}
+.links a{color:var(--muted);text-decoration:none;font-weight:500;font-size:15px}
+.links a:hover{color:var(--text)}
+.btn{display:inline-flex;gap:8px;align-items:center;justify-content:center;background:var(--blue);color:var(--btn-t);text-decoration:none;font-weight:600;padding:12px 22px;border-radius:10px;border:1px solid transparent;transition:.2s;box-shadow:0 8px 24px -8px var(--blue)}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--text);box-shadow:none}
+.hero{position:relative;padding:80px 0 70px;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;z-index:0;animation:float 9s ease-in-out infinite}
+.o1{width:420px;height:420px;background:var(--blue);top:-120px;left:-120px}
+.o2{width:380px;height:380px;background:var(--violet);right:-100px;top:60px;animation-delay:-4s}
+@keyframes float{50%{transform:translate(30px,40px)}}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+.pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--bg2);padding:7px 15px;border-radius:99px;font:600 12px "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--blue)}
+.pill b{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.3;transform:scale(1.5)}}
+h1{font-size:clamp(34px,5.6vw,60px);line-height:1.08;margin:20px 0 18px}
+.sub{color:var(--muted);font-size:18px;max-width:520px}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chips span{font-size:13px;color:var(--muted);border:1px solid var(--line);padding:5px 12px;border-radius:99px}
+.chat{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 30px 80px -30px rgba(47,107,255,.5);min-height:420px}
+.chead{display:flex;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.av{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--violet));display:grid;place-items:center}
+.chead small{display:block;color:#22c55e;font-size:12px}
+.msgs{display:flex;flex-direction:column;gap:11px;min-height:270px}
+.m{max-width:85%;padding:11px 15px;border-radius:14px;font-size:14.5px;animation:pop .35s ease both}
+.m.a{background:var(--bg2);align-self:flex-start;border-bottom-left-radius:4px}
+.m.u{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.m.dots span{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:var(--muted);animation:bnc 1s infinite}
+.m.dots span:nth-child(2){animation-delay:.15s}.m.dots span:nth-child(3){animation-delay:.3s}
+@keyframes bnc{50%{transform:translateY(-5px)}}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}}
+.cin{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:11px 14px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.cin i{width:28px;height:28px;border-radius:8px;background:var(--blue)}
+section{padding:70px 0}
+.eyebrow{font:600 12px "JetBrains Mono",monospace;letter-spacing:.1em;color:var(--blue);text-transform:uppercase}
+h2{font-size:clamp(28px,4vw,40px);margin:10px 0 14px}
+.sec-sub{color:var(--muted);max-width:620px;margin:0 0 36px}
+.quote{background:linear-gradient(135deg,var(--bg2),var(--card));border:1px solid var(--line);border-radius:20px;padding:30px;font-size:19px;position:relative}
+.quote::before{content:"“";position:absolute;top:-6px;left:18px;font:700 80px "Space Grotesk";color:var(--blue);opacity:.5;line-height:1}
+.g2,.g3{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;transition:.25s}
+.card:hover{transform:translateY(-6px);border-color:var(--blue);box-shadow:0 20px 40px -20px var(--blue)}
+.ico{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--violet));display:grid;place-items:center;font-size:22px;margin-bottom:16px}
+.card h3{font-size:20px;margin-bottom:8px}
+.card p{color:var(--muted);margin:0}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.vs .card b{display:block;font:700 34px "Space Grotesk";margin:6px 0}
+.bad b{color:#f87171}.good b{color:#22c55e}
+.price{font:700 38px "Space Grotesk";margin:8px 0}
+.card ul{list-style:none;padding:0;margin:14px 0 0}
+.card li{color:var(--muted);padding:5px 0 5px 26px;position:relative;font-size:15px}
+.card li::before{content:"✓";position:absolute;left:0;color:#22c55e;font-weight:700}
+.feat{border-color:var(--blue)}
+.steps{display:grid;gap:0;position:relative;max-width:720px}
+.step{display:flex;gap:20px;padding-bottom:30px;position:relative}
+.step:not(:last-child)::after{content:"";position:absolute;left:23px;top:50px;bottom:0;width:2px;background:linear-gradient(var(--blue),transparent)}
+.num{flex:none;width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font:700 18px "Space Grotesk"}
+.step h3{font-size:19px;margin-bottom:4px}.step p{margin:0;color:var(--muted)}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:12px}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between}
+summary::after{content:"+";color:var(--blue);font-size:22px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin:12px 0 0}
+.final{text-align:center;background:linear-gradient(135deg,rgba(47,107,255,.25),rgba(139,92,246,.25));border:1px solid var(--line);border-radius:26px;padding:56px 24px}
+.final .btn{background:var(--wa);color:#06210f;box-shadow:0 10px 30px -8px var(--wa);font-size:17px;padding:15px 30px;margin-top:10px}
+footer{text-align:center;color:var(--muted);font-size:14px;padding:30px 0 110px}
+.fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:40;width:60px;height:60px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 8px 26px rgba(37,211,102,.5);animation:ring 2.4s infinite}
+.fab svg{width:32px;height:32px;fill:#fff}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(37,211,102,.6)}70%,100%{box-shadow:0 0 0 22px rgba(37,211,102,0)}}
+.rv{opacity:0;transform:translateY(30px);transition:.7s}
+.rv.in{opacity:1;transform:none}
+@media(max-width:860px){.hero .wrap{grid-template-columns:1fr}.links a:not(.btn){display:none}.hero{padding-top:50px}.vs{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
 </style>
+</head>
+<body>
+<nav><div class="wrap">
+<a class="logo" href="#top"><i>📦</i>Karachi<span class="grad">Sourcing</span></a>
+<div class="links"><a href="#why">Why Us</a><a href="#pricing">Charges</a><a href="#process">Process</a><a href="#faq">FAQ</a><a class="btn wa" href="#">Get Started</a></div>
+</div></nav>
 
-    <style>
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-            animation: marquee 30s linear infinite;
-        }
-    </style>
+<header class="hero" id="top">
+<div class="orb o1"></div><div class="orb o2"></div>
+<div class="wrap">
+<div>
+<span class="pill"><b></b>PRIMARY SOURCE • KARACHI</span>
+<h1>Karachi Markets ka <span class="grad">First-Hand</span> Rate, ghar baithay.</h1>
+<p class="sub">Kya aap Punjab ya doosre sheharon me baith kar Karachi Markets se wholesale par maal khareedna chahte hain? Hum Importers, Factories aur Primary Stockists se seedha rate nikalte hain.</p>
+<div class="cta"><a class="btn wa" href="#">WhatsApp par Request Bhejein</a><a class="btn ghost" href="#process">Process Dekhein</a></div>
+<div class="chips"><span>🎥 HD Video Proofs</span><span>🤝 Price Negotiation</span><span>🚚 Builty / Cargo Handling</span></div>
+</div>
+<div class="chat" aria-label="Sample conversation">
+<div class="chead"><div class="av">📦</div><div><b>Sourcing Assistant</b><small>● Online</small></div></div>
+<div class="msgs" id="msgs"></div>
+<div class="cin">Apni requirement likhein...<i></i></div>
+</div>
+</div>
+</header>
 
-    <!-- Services Section -->
-    <section id="services" class="section-padding">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-20">
-                <div class="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest mb-4 mono">Our Expertise</div>
-                <h2 class="text-4xl md:text-5xl font-bold mb-6">Premium Digital Services</h2>
-                <p class="text-dark-muted max-w-2xl mx-auto">We combine cutting-edge AI technology with world-class web development to deliver exceptional results.</p>
-            </div>
+<main>
+<section><div class="wrap rv">
+<div class="quote">Aam taur par log jin Wholesale Markets aur Shopkeepers ko dekhte hain, wo ‘Main Source’ nahi hote! Karachi me un Shopkeepers ko jo Importers, Factories, aur Primary Stockists maal supply karte hain—mera wada hai ke main aapko usi First-Hand Supply Rate par maal dilwane ki poori koshish karunga.”</div>
+</div></section>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Service 1 -->
-                <div class="glass-card p-8 group">
-                    <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary transition-colors">
-                        <i data-lucide="message-square" class="text-primary group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Custom AI Chatbots</h3>
-                    <p class="text-dark-muted text-sm leading-relaxed mb-6">24/7 customer support automation that learns from your data and converts visitors into leads.</p>
-                    <div class="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
-                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </div>
-                </div>
+<section id="why"><div class="wrap">
+<div class="rv"><span class="eyebrow">Why Choose Us</span><h2>Unbeatable <span class="grad">Value</span></h2><p class="sec-sub">Beech ke middleman hata kar seedha source tak pahunchte hain.</p></div>
+<div class="g2 rv">
+<div class="card"><div class="ico">🏭</div><h3>Primary Supply Chain Rates</h3><p>Hum Retail ya Normal Wholesaler ke bajaye Direct Importers, Factory Distributors, aur Main Warehouses se rate nikalte hain—jo rate Wholesale Dukandaron ko milta hai, hum aapko us rate par khareedari karwane ki koshish karte hain.</p></div>
+<div class="card"><div class="ico">✈️</div><h3>Travel &amp; Hotel Expenses Bachayein</h3><p>Hum ghar baithay aapko sab se sasta rate aur quality inspect karke denge—Karachi aaye baghair.</p></div>
+</div>
+<div class="vs rv" style="margin-top:18px">
+<div class="card bad"><p>Khud Karachi aayein</p><b>PKR 15,000 – 20,000</b><p>Safar, hotel, local travel—aur phir bhi Main Importers ka pata nahi chalta.</p></div>
+<div class="card good"><p>Hamari service (100k tak ke orders)</p><b>PKR 2,000</b><p>Inspection, negotiation, video proof aur dispatch—sab shamil.</p></div>
+</div>
+</div></section>
 
-                <!-- Service 2 -->
-                <div class="glass-card p-8 group">
-                    <div class="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mb-6 group-hover:bg-secondary transition-colors">
-                        <i data-lucide="layout" class="text-secondary group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">WordPress Development</h3>
-                    <p class="text-dark-muted text-sm leading-relaxed mb-6">High-performance, SEO-optimized sites built with the latest technologies for maximum speed.</p>
-                    <div class="flex items-center gap-2 text-xs font-bold text-secondary mono uppercase tracking-wider">
-                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </div>
-                </div>
+<section id="pricing"><div class="wrap">
+<div class="rv"><span class="eyebrow">Charges &amp; Terms</span><h2>Saaf aur <span class="grad">Seedhay</span> Charges</h2></div>
+<div class="g3 rv">
+<div class="card feat"><p>Orders up to PKR 100,000</p><div class="price">PKR 2,000/-</div><p>Fixed Sourcing &amp; Ground Handling Fee</p>
+<ul><li>Live Market/Warehouse Inspection</li><li>Price Negotiation</li><li>HD Video Proofs</li><li>Goods Packaging Verification</li><li>Builty/Cargo Dispatch Handling</li></ul></div>
+<div class="card"><p>Bulk Orders (PKR 100,000+)</p><div class="price">1.5% – 2%</div><p>Flat Sourcing Fee / Customized Package</p></div>
+<div class="card"><p>Minimum Order Value (MOQ)</p><div class="price">PKR 25,000/-</div><p>Saste / chote orders par primary supply chain sourcing feasible nahi hoti.</p></div>
+</div>
+</div></section>
 
-                <!-- Service 3 -->
-                <div class="glass-card p-8 group">
-                    <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent transition-colors">
-                        <i data-lucide="zap" class="text-accent group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Workflow Automation</h3>
-                    <p class="text-dark-muted text-sm leading-relaxed mb-6">Streamline repetitive tasks with AI-driven workflows that save hundreds of hours every month.</p>
-                    <div class="flex items-center gap-2 text-xs font-bold text-accent mono uppercase tracking-wider">
-                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </div>
-                </div>
+<section id="process"><div class="wrap">
+<div class="rv"><span class="eyebrow">How it works</span><h2>Simple <span class="grad">4-Step</span> Process</h2></div>
+<div class="steps rv">
+<div class="step"><div class="num">1</div><div><h3>Send Request</h3><p>Product details, specs, aur required quantity hume batayein.</p></div></div>
+<div class="step"><div class="num">2</div><div><h3>Direct Importer Survey</h3><p>Hum Main Importer/Warehouse se live video/pictures aur direct supply rates bhejenge.</p></div></div>
+<div class="step"><div class="num">3</div><div><h3>Service Fee &amp; Payment</h3><p>Fixed PKR 2,000/- service fee clear karein aur Wholesaler/Cargo verification par payment process karein.</p></div></div>
+<div class="step"><div class="num">4</div><div><h3>Dispatch &amp; Track</h3><p>Builty receipt aur cargo tracking details aapko instant send kar di jayengi.</p></div></div>
+</div>
+</div></section>
 
-                <!-- Service 4 -->
-                <div class="glass-card p-8 group">
-                    <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary transition-colors">
-                        <i data-lucide="shopping-cart" class="text-primary group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">E-commerce Solutions</h3>
-                    <p class="text-dark-muted text-sm leading-relaxed mb-6">Scalable online stores that convert browsers into buyers with seamless checkout experiences.</p>
-                    <div class="flex items-center gap-2 text-xs font-bold text-primary mono uppercase tracking-wider">
-                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </div>
-                </div>
+<section id="faq"><div class="wrap" style="max-width:780px">
+<div class="rv"><span class="eyebrow">FAQ</span><h2>Aam <span class="grad">Sawalat</span></h2></div>
+<div class="rv">
+<details><summary>Kam se kam order kitna hona chahiye?</summary><p>Minimum Order Value PKR 25,000 hai. Is se chote orders par primary supply chain sourcing feasible nahi hoti.</p></details>
+<details><summary>Service fee kitni hai?</summary><p>PKR 100,000 tak ke orders par fixed PKR 2,000. 100,000 se upar flat 1.5% se 2% ya customized package.</p></details>
+<details><summary>Maal ki quality kaise pata chalegi?</summary><p>Hum live market/warehouse inspection karte hain aur HD video proofs aur packaging verification aapko bhejte hain.</p></details>
+<details><summary>Maal mujh tak kaise pahunchega?</summary><p>Hum Builty/Cargo dispatch handle karte hain aur receipt aur tracking details aapko foran bhej dete hain.</p></details>
+</div>
+</div></section>
 
-                <!-- Service 5 -->
-                <div class="glass-card p-8 group">
-                    <div class="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mb-6 group-hover:bg-secondary transition-colors">
-                        <i data-lucide="palette" class="text-secondary group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">UI/UX Design</h3>
-                    <p class="text-dark-muted text-sm leading-relaxed mb-6">Modern, user-centric digital experiences that are as beautiful as they are functional.</p>
-                    <div class="flex items-center gap-2 text-xs font-bold text-secondary mono uppercase tracking-wider">
-                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </div>
-                </div>
+<section><div class="wrap rv"><div class="final">
+<h2>Apna pehla order <span class="grad">aaj hi</span> shuru karein</h2>
+<p class="sec-sub" style="margin:0 auto 14px">Product, specs aur quantity bhejein—baqi hum sambhal lenge.</p>
+<a class="btn wa" href="#">💬 WhatsApp: 0317 0114485</a>
+</div></div></section>
+</main>
 
-                <!-- Service 6 -->
-                <div class="glass-card p-8 group">
-                    <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-6 group-hover:bg-accent transition-colors">
-                        <i data-lucide="shield-check" class="text-accent group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Maintenance & Support</h3>
-                    <p class="text-dark-muted text-sm leading-relaxed mb-6">Keeping your digital assets secure, updated, and performing at their best 24/7.</p>
-                    <div class="flex items-center gap-2 text-xs font-bold text-accent mono uppercase tracking-wider">
-                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<footer><div class="wrap">Karachi B2B Primary Sourcing &amp; Ground Inspection Service • Karachi, Pakistan</div></footer>
 
-    <!-- Features Section -->
-    <section class="section-padding bg-dark-card/30">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
-            <div class="relative">
-                <div class="absolute -inset-10 bg-secondary/10 blur-3xl rounded-full"></div>
-                <div class="glass-card p-8 relative z-10 overflow-hidden">
-                    <div class="flex items-center gap-4 mb-8">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="h-4 bg-dark-border rounded-full w-3/4"></div>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div class="h-24 bg-primary/20 rounded-xl border border-primary/30 flex flex-col items-center justify-center">
-                                <span class="text-2xl font-bold text-primary">98%</span>
-                                <span class="text-[10px] uppercase mono">Growth</span>
-                            </div>
-                            <div class="h-24 bg-secondary/20 rounded-xl border border-secondary/30 flex flex-col items-center justify-center">
-                                <span class="text-2xl font-bold text-secondary">10x</span>
-                                <span class="text-[10px] uppercase mono">Speed</span>
-                            </div>
-                            <div class="h-24 bg-accent/20 rounded-xl border border-accent/30 flex flex-col items-center justify-center">
-                                <span class="text-2xl font-bold text-accent">24/7</span>
-                                <span class="text-[10px] uppercase mono">Active</span>
-                            </div>
-                        </div>
-                        <div class="h-32 bg-dark-bg/50 rounded-xl border border-dark-border p-4">
-                            <div class="flex items-end gap-2 h-full">
-                                <div class="w-full bg-primary/40 h-1/2 rounded-t-sm"></div>
-                                <div class="w-full bg-primary/40 h-3/4 rounded-t-sm"></div>
-                                <div class="w-full bg-primary h-full rounded-t-sm"></div>
-                                <div class="w-full bg-primary/40 h-2/3 rounded-t-sm"></div>
-                                <div class="w-full bg-primary/40 h-1/2 rounded-t-sm"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<a class="fab wa" href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6c-.2.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg></a>
 
-            <div>
-                <h2 class="text-4xl font-bold mb-8">Why Choose ShamLabs?</h2>
-                <div class="space-y-8">
-                    <div class="flex gap-6">
-                        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <i data-lucide="cpu" class="text-primary w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold mb-2">Smart AI Integration</h4>
-                            <p class="text-dark-muted text-sm leading-relaxed">We don't just add AI; we integrate it into your core business processes for maximum impact.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-6">
-                        <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                            <i data-lucide="gauge" class="text-secondary w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold mb-2">Lightning Fast Speed</h4>
-                            <p class="text-dark-muted text-sm leading-relaxed">Our WordPress solutions are optimized for Core Web Vitals, ensuring top-tier performance.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-6">
-                        <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-                            <i data-lucide="target" class="text-accent w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold mb-2">Conversion Focused</h4>
-                            <p class="text-dark-muted text-sm leading-relaxed">Every pixel and every line of code is designed with one goal in mind: growing your revenue.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Metrics Section -->
-    <section class="section-padding bg-primary relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 30px 30px;"></div>
-        </div>
-        <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
-            <div class="text-center">
-                <div class="text-5xl font-bold text-white mb-2">98%</div>
-                <div class="text-white/70 text-xs font-bold uppercase tracking-widest mono">Satisfaction</div>
-            </div>
-            <div class="text-center">
-                <div class="text-5xl font-bold text-white mb-2">250+</div>
-                <div class="text-white/70 text-xs font-bold uppercase tracking-widest mono">Projects</div>
-            </div>
-            <div class="text-center">
-                <div class="text-5xl font-bold text-white mb-2">10x</div>
-                <div class="text-white/70 text-xs font-bold uppercase tracking-widest mono">Deployment</div>
-            </div>
-            <div class="text-center">
-                <div class="text-5xl font-bold text-white mb-2">24/7</div>
-                <div class="text-white/70 text-xs font-bold uppercase tracking-widest mono">Support</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Process Section -->
-    <section id="process" class="section-padding">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-20">
-                <h2 class="text-4xl font-bold mb-6">Our Working Process</h2>
-                <p class="text-dark-muted max-w-2xl mx-auto">A streamlined approach to taking your project from concept to reality.</p>
-            </div>
-
-            <div class="grid md:grid-cols-4 gap-8">
-                <div class="text-center relative">
-                    <div class="w-16 h-16 rounded-full bg-dark-card border border-dark-border flex items-center justify-center mx-auto mb-6 text-xl font-bold text-primary relative z-10">01</div>
-                    <h4 class="text-lg font-bold mb-3">Discovery</h4>
-                    <p class="text-dark-muted text-sm">Deep dive into your business goals and user needs.</p>
-                </div>
-                <div class="text-center relative">
-                    <div class="w-16 h-16 rounded-full bg-dark-card border border-dark-border flex items-center justify-center mx-auto mb-6 text-xl font-bold text-secondary relative z-10">02</div>
-                    <h4 class="text-lg font-bold mb-3">Strategy</h4>
-                    <p class="text-dark-muted text-sm">Crafting a custom roadmap for your digital success.</p>
-                </div>
-                <div class="text-center relative">
-                    <div class="w-16 h-16 rounded-full bg-dark-card border border-dark-border flex items-center justify-center mx-auto mb-6 text-xl font-bold text-accent relative z-10">03</div>
-                    <h4 class="text-lg font-bold mb-3">Development</h4>
-                    <p class="text-dark-muted text-sm">Building with precision using modern tech stacks.</p>
-                </div>
-                <div class="text-center relative">
-                    <div class="w-16 h-16 rounded-full bg-dark-card border border-dark-border flex items-center justify-center mx-auto mb-6 text-xl font-bold text-primary relative z-10">04</div>
-                    <h4 class="text-lg font-bold mb-3">Launch</h4>
-                    <p class="text-dark-muted text-sm">Going live and continuous optimization for growth.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <script>
-    <!-- Testimonials -->
-    <section class="section-padding bg-dark-card/30">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid lg:grid-cols-3 gap-8">
-                <div class="glass-card p-8">
-                    <div class="flex text-yellow-500 mb-6 gap-1">
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                    </div>
-                    <p class="text-dark-muted italic mb-8 leading-relaxed">"The AI chatbot ShamLabs built for us has completely transformed our customer service. It handles 80% of queries automatically!"</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">JD</div>
-                        <div>
-                            <div class="text-sm font-bold">John Doe</div>
-                            <div class="text-[10px] text-dark-muted">CEO, TechFlow</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="glass-card p-8">
-                    <div class="flex text-yellow-500 mb-6 gap-1">
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                    </div>
-                    <p class="text-dark-muted italic mb-8 leading-relaxed">"Our new WordPress site is blazing fast. We saw a 40% increase in conversions within the first month of launching."</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center font-bold text-secondary">SM</div>
-                        <div>
-                            <div class="text-sm font-bold">Sarah Miller</div>
-                            <div class="text-[10px] text-dark-muted">Marketing Director, Bloom</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="glass-card p-8">
-                    <div class="flex text-yellow-500 mb-6 gap-1">
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                        <i data-lucide="star" class="fill-current w-4 h-4"></i>
-                    </div>
-                    <p class="text-dark-muted italic mb-8 leading-relaxed">"The level of technical expertise and attention to detail at ShamLabs is unmatched. Highly recommended for any AI project."</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center font-bold text-accent">MR</div>
-                        <div>
-                            <div class="text-sm font-bold">Michael Ross</div>
-                            <div class="text-[10px] text-dark-muted">Founder, DataSync</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section id="faq" class="section-padding">
-        <div class="max-w-3xl mx-auto">
-            <h2 class="text-4xl font-bold mb-12 text-center">Frequently Asked Questions</h2>
-            <div class="space-y-4">
-                <div class="glass-card p-6 cursor-pointer group" onclick="toggleFaq(this)">
-                    <div class="flex items-center justify-between">
-                        <h4 class="font-bold">How long does it take to build a custom AI chatbot?</h4>
-                        <i data-lucide="plus" class="w-5 h-5 text-primary group-[.open]:rotate-45 transition-transform"></i>
-                    </div>
-                    <div class="max-h-0 overflow-hidden transition-all duration-300 group-[.open]:max-h-40 group-[.open]:mt-4">
-                        <p class="text-dark-muted text-sm">Typically, a custom AI chatbot takes 2-4 weeks depending on the complexity and data integration requirements.</p>
-                    </div>
-                </div>
-                <div class="glass-card p-6 cursor-pointer group" onclick="toggleFaq(this)">
-                    <div class="flex items-center justify-between">
-                        <h4 class="font-bold">Will my website be mobile-friendly?</h4>
-                        <i data-lucide="plus" class="w-5 h-5 text-primary group-[.open]:rotate-45 transition-transform"></i>
-                    </div>
-                    <div class="max-h-0 overflow-hidden transition-all duration-300 group-[.open]:max-h-40 group-[.open]:mt-4">
-                        <p class="text-dark-muted text-sm">Absolutely! Every site we build is 100% responsive and optimized for all devices and screen sizes.</p>
-                    </div>
-                </div>
-                <div class="glass-card p-6 cursor-pointer group" onclick="toggleFaq(this)">
-                    <div class="flex items-center justify-between">
-                        <h4 class="font-bold">Do you offer post-launch support?</h4>
-                        <i data-lucide="plus" class="w-5 h-5 text-primary group-[.open]:rotate-45 transition-transform"></i>
-                    </div>
-                    <div class="max-h-0 overflow-hidden transition-all duration-300 group-[.open]:max-h-40 group-[.open]:mt-4">
-                        <p class="text-dark-muted text-sm">Yes, we provide ongoing maintenance and support packages to ensure your digital assets stay secure and updated.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="section-padding relative">
-        <div class="max-w-7xl mx-auto">
-            <div class="glass-card p-12 lg:p-20 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent pointer-events-none"></div>
-                <div class="grid lg:grid-cols-2 gap-16 relative z-10">
-                    <div>
-                        <h2 class="text-4xl md:text-5xl font-bold mb-8">Ready to <span class="text-gradient">Transform</span> Your Business?</h2>
-                        <p class="text-dark-muted text-lg mb-12">Join hundreds of successful brands using ShamLabs to automate and grow. Let's build something extraordinary together.</p>
-                        
-                        <div class="space-y-6">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-xl bg-dark-bg border border-dark-border flex items-center justify-center">
-                                    <i data-lucide="mail" class="text-primary w-6 h-6"></i>
-                                </div>
-                                <div>
-                                    <div class="text-xs text-dark-muted uppercase mono">Email Us</div>
-                                    <div class="font-bold">hello@shamlabs.com</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-xl bg-dark-bg border border-dark-border flex items-center justify-center">
-                                    <i data-lucide="message-circle" class="text-secondary w-6 h-6"></i>
-                                </div>
-                                <div>
-                                    <div class="text-xs text-dark-muted uppercase mono">Live Chat</div>
-                                    <div class="font-bold">Available 24/7</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <!-- Formspree Integration -->
-                        <form action="https://formspree.io/f/xkovzbrn" method="POST" class="space-y-4">
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <input type="text" name="name" placeholder="Your Name" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-6 py-4 text-sm focus:border-primary outline-none transition-colors">
-                                <input type="email" name="email" placeholder="Email Address" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-6 py-4 text-sm focus:border-primary outline-none transition-colors">
-                            </div>
-                            <input type="text" name="subject" placeholder="Subject" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-6 py-4 text-sm focus:border-primary outline-none transition-colors">
-                            <textarea name="message" placeholder="How can we help?" rows="5" required class="w-full bg-dark-bg border border-dark-border rounded-xl px-6 py-4 text-sm focus:border-primary outline-none transition-colors"></textarea>
-                            <button type="submit" class="btn-primary w-full justify-center shine-effect">Send Message</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-        
-    <!-- Footer -->
-    <footer class="py-12 px-6 border-t border-dark-border">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <a href="#" class="flex items-center gap-3">
-                <span class="text-xl font-bold tracking-tight">Sham<span class="text-primary">Labs</span></span>
-            </a>
-            <p class="text-dark-muted text-sm">© 2026 ShamLabs. All rights reserved.</p>
-            <div class="flex gap-4">
-                <a href="#" class="w-10 h-10 rounded-lg bg-dark-card border border-dark-border flex items-center justify-center hover:border-primary transition-colors">
-                    <i data-lucide="twitter" class="w-5 h-5 text-dark-muted"></i>
-                </a>
-                <a href="#" class="w-10 h-10 rounded-lg bg-dark-card border border-dark-border flex items-center justify-center hover:border-primary transition-colors">
-                    <i data-lucide="linkedin" class="w-5 h-5 text-dark-muted"></i>
-                </a>
-                <a href="#" class="w-10 h-10 rounded-lg bg-dark-card border border-dark-border flex items-center justify-center hover:border-primary transition-colors">
-                    <i data-lucide="github" class="w-5 h-5 text-dark-muted"></i>
-                </a>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
-
-        // FAQ Toggle Function
-        function toggleFaq(element) {
-            element.classList.toggle('open');
-        }
-
-        // GSAP Animations
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Hero Animations
-        gsap.from("#hero-content > *", {
-            y: 30,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.2,
-            ease: "power3.out"
-        });
-
-        gsap.from("#hero-visual", {
-            x: 50,
-            opacity: 0,
-            duration: 1.5,
-            ease: "power3.out"
-        });
-
-        // Section Headers
-        gsap.utils.toArray('section').forEach(section => {
-            const heading = section.querySelector('h2');
-            const p = section.querySelector('p');
-            
-            if (heading) {
-                gsap.from(heading, {
-                    scrollTrigger: {
-                        trigger: heading,
-                        start: "top 80%",
-                    },
-                    y: 30,
-                    opacity: 0,
-                    duration: 1,
-                    ease: "power3.out"
-                });
-            }
-        });
-
-        // Cards Animation
-        gsap.utils.toArray('.glass-card').forEach(card => {
-            gsap.from(card, {
-                scrollTrigger: {
-                    trigger: card,
-                    start: "top 90%",
-                },
-                y: 50,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power3.out"
-            });
-        });
-    </script>
+<script>
+var url="https://wa.me/923170114485?text="+encodeURIComponent("Assalam o Alaikum, mujhe Karachi sourcing service ke baray me maloomat chahiye.");
+document.querySelectorAll("a.wa").forEach(function(a){a.href=url;a.target="_blank";a.rel="noopener"});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll(".rv").forEach(function(el){io.observe(el)});
+var script=[["a","Assalam o Alaikum! Aap Karachi se kya maal mangwana chahte hain?"],["u","Lahore se hoon. Mujhe 50,000 ka stock chahiye, specs bhej doon?"],["a","Ji zaroor. Hum Importer/Warehouse se live video aur direct rate bhejenge. 🎥"],["u","Aur charges kitne honge?"],["a","100,000 tak ke order par fixed PKR 2,000. Dispatch aur builty bhi hum handle karte hain. ✅"]];
+var box=document.getElementById("msgs"),i=0;
+function add(t,x){var d=document.createElement("div");d.className="m "+t;d.textContent=x;box.appendChild(d);return d}
+function next(){
+if(i>=script.length){setTimeout(function(){box.innerHTML="";i=0;next()},3500);return}
+var s=script[i++];
+if(s[0]==="a"){var d=document.createElement("div");d.className="m a dots";d.innerHTML="<span></span><span></span><span></span>";box.appendChild(d);
+setTimeout(function(){d.remove();add("a",s[1]);setTimeout(next,1300)},1100)}
+else{add("u",s[1]);setTimeout(next,1200)}}
+next();
+</script>
 </body>
 </html>
